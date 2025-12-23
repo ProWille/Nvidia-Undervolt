@@ -1,0 +1,9 @@
+[Unit]
+Description=Undervolt the first available Nvidia GPU device
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/undervolt-nvidia-device
+
+[Install]
+WantedBy=graphical.target
