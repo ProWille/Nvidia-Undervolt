@@ -2,23 +2,18 @@
 from pynvml import *
 from ctypes import byref
 
-# Run command to find the correct index: nvidia-smi --list-gpus
+# Run command to find the correct index: nvidia-smi --list-gpus.
 DEVICE_INDEX = 0
 MIN_GPU_LOCKED_CLOCK = 210
 MAX_GPU_LOCKED_CLOCK = 1965
-MIN_MEM_LOCKED_CLOCK = 9501
-MAX_MEM_LOCKED_CLOCK = 10001
-GPU_CLOCK_OFFSET = 180
-MEM_CLOCK_OFFSET = 500
 POWER_LIMIT = 260_000
+GPU_CLOCK_OFFSET = 180
+MEM_CLOCK_OFFSET = 750
 
-# Sets minimum and maximum GPU and memory clocks, You can find valid clock values with nvidia-smi -q -d SUPPORTED_CLOCKS.
-# If you're happy with the maximum clock values of your GPU and memory, you can omit these two functions.
+# Sets minimum and maximum GPU clocks, You can find valid clock values with command: nvidia-smi -q -d SUPPORTED_CLOCKS.
+# If you're happy with the maximum clock value of your GPU, you can omit this function.
 def set_gpu_locked_clocks(device, min_locked_clock: int, max_locked_clock: int) -> None:
     nvmlDeviceSetGpuLockedClocks(handle=device, minGpuClockMHz=min_locked_clock, maxGpuClockMHz=max_locked_clock)
-
-def set_memory_locked_clocks(device, min_locked_clock: int, max_locked_clock: int) -> None:
-    nvmlDeviceSetMemoryLockedClocks(handle=device, minMemClockMHz=min_locked_clock, maxMemClockMHz=max_locked_clock)
 
 # Sets the power limit which has nothing to do with undervolting and can be omitted.
 # The GPU will throttle itself (reduce clocks) to stay within this value.
@@ -59,7 +54,6 @@ def main():
         nvmlInit()
         device = nvmlDeviceGetHandleByIndex(index=DEVICE_INDEX)
         set_gpu_locked_clocks(device=device, min_locked_clock=MIN_GPU_LOCKED_CLOCK, max_locked_clock=MAX_GPU_LOCKED_CLOCK)
-        set_memory_locked_clocks(device=device, min_locked_clock=MIN_MEM_LOCKED_CLOCK, max_locked_clock=MAX_MEM_LOCKED_CLOCK)
         set_power_limit(device=device, power_limit=POWER_LIMIT)
         set_gpu_clock_offset(device=device, clock_offset=GPU_CLOCK_OFFSET)
         set_memory_clock_offset(device=device, clock_offset=MEM_CLOCK_OFFSET)
