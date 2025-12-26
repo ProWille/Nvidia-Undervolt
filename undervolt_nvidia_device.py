@@ -41,7 +41,7 @@ def set_memory_clock_offset(device, clock_offset: int) -> None:
     mem_clock_info.version = nvmlClockOffset_v1
     mem_clock_info.type = NVML_CLOCK_MEM
     mem_clock_info.pstate = NVML_PSTATE_0
-    mem_clock_info.clockOffsetMHz = clock_offset
+    mem_clock_info.clockOffsetMHz = clock_offset * 2
 
     status_code = nvmlDeviceSetClockOffsets(device=device, info=byref(mem_clock_info))
 

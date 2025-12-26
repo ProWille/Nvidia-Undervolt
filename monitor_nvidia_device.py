@@ -18,9 +18,9 @@ class NvidiaDeviceInfo:
         self.device = nvmlDeviceGetHandleByIndex(index=device_index)
 
     def __print_device_info(self, measurement: str, unit: str, value: int, min_value: int, max_value: int) -> None:
-        self.lines.append(f'{measurement} ({unit}):')
-        self.lines.append(f'Current\t\tMin\t\tMax')
-        self.lines.append(f'{value}\t\t{min_value}\t\t{max_value}\n')
+        self.lines.append(f"{measurement} ({unit}):")
+        self.lines.append(f"Current\t\tMin\t\tMax")
+        self.lines.append(f"{value}\t\t{min_value}\t\t{max_value}\n")
 
     def print_device_info(self) -> None:
         print('\033c', end='')
@@ -82,8 +82,10 @@ def main() -> None:
         get_device_info(device_index=DEVICE_INDEX, interval_seconds=INTERVAL_SECONDS)
     except KeyboardInterrupt:
         print("Monitoring stopped by user.")
+    except NVMLError as err:
+        print("Failed to initialize NVML or get device handle:", err)
     except Exception as e:
-        print("An error occurred during monitoring:", str(e))
+        print("An error occurred during monitoring:", e)
     finally:
         nvmlShutdown()
 
