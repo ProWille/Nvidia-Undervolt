@@ -4,6 +4,12 @@ from ctypes import byref
 
 DEVICE_INDEX = 0
 
+def get_device_info(device) -> None:
+    device_name = nvmlDeviceGetName(handle=device)
+    power_state = nvmlDeviceGetPowerState(handle=device)
+    print(f"Device Name\t\t\tDevice P-State")
+    print(f"{device_name}\tP{power_state}\n")
+
 def get_device_usage(device) -> None:
     device_power_usage = nvmlDeviceGetPowerUsage(handle=device) // 1000
     device_temperature = nvmlDeviceGetTemperature(handle=device, sensor=NVML_TEMPERATURE_GPU)
@@ -53,7 +59,7 @@ def main() -> None:
     try:
         nvmlInit()
         device = nvmlDeviceGetHandleByIndex(index=DEVICE_INDEX)
-        print(f"Device Name\n{nvmlDeviceGetName(handle=device)}\n")
+        get_device_info(device=device)
         get_device_usage(device=device)
         get_gpu_clock_info(device=device)
         get_mem_clock_info(device=device)

@@ -8,6 +8,7 @@ INTERVAL_SECONDS = 2
 
 class NvidiaDeviceInfo:
     def __init__(self, device_index: int) -> None:
+        self.min_power_state, self.max_power_state = -inf, inf
         self.min_power_usage, self.max_power_usage = inf, -inf
         self.min_temperature, self.max_temperature = inf, -inf
         self.min_device_usage, self.max_device_usage = inf, -inf
@@ -18,7 +19,10 @@ class NvidiaDeviceInfo:
         self.device = nvmlDeviceGetHandleByIndex(index=device_index)
 
     def __print_device_info(self, measurement: str, unit: str, value: int, min_value: int, max_value: int) -> None:
-        self.lines.append(f"{measurement} ({unit}):")
+        if unit:
+            self.lines.append(f"{measurement} ({unit}):")
+        else:
+            self.lines.append(f"{measurement}:")
         self.lines.append(f"Current\t\tMin\t\tMax")
         self.lines.append(f"{value}\t\t{min_value}\t\t{max_value}\n")
 
@@ -26,6 +30,12 @@ class NvidiaDeviceInfo:
         print('\033c', end='')
         print('\n'.join(self.lines))
         self.lines.clear()
+
+    def get_power_state(self) -> None:
+        power_state = nvmlDeviceGetPowerState(handle=self.device)
+        self.min_power_state = max(power_state, self.min_power_state)
+        self.max_power_state = min(power_state, self.max_power_state)
+        self.__print_device_info('Power State', '', power_state, self.min_power_state, self.max_power_state)
 
     def get_power_usage(self) -> None:
         current_power_usage = nvmlDeviceGetPowerUsage(handle=self.device) // 1000
@@ -67,6 +77,7 @@ class NvidiaDeviceInfo:
 def get_device_info(device_index: int, interval_seconds: int) -> None:
     device = NvidiaDeviceInfo(device_index=device_index)
     while True:
+        device.get_power_state()
         device.get_power_usage()
         device.get_temperature()
         device.get_device_usage()
