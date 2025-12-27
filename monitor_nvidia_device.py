@@ -24,7 +24,7 @@ class NvidiaDeviceInfo:
         else:
             self.lines.append(f"{measurement}:")
         self.lines.append(f"Current\t\tMin\t\tMax")
-        self.lines.append(f"{value}\t\t{min_value}\t\t{max_value}\n")
+        self.lines.append(f"{value:<5}\t\t{min_value:<5}\t\t{max_value:<5}\n")
 
     def print_device_info(self) -> None:
         print('\033c', end='')

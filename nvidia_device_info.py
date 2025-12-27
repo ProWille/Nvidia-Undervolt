@@ -15,10 +15,10 @@ def get_device_usage(device) -> None:
     device_temperature = nvmlDeviceGetTemperature(handle=device, sensor=NVML_TEMPERATURE_GPU)
     device_usage = nvmlDeviceGetUtilizationRates(handle=device).gpu
     device_mem_info = nvmlDeviceGetMemoryInfo(handle=device)
-    device_mem_usage = (device_mem_info.used / device_mem_info.total) * 100
+    device_mem_usage = int((device_mem_info.used / device_mem_info.total) * 100)
 
     print("Power Usage\tTemperature\tGPU Usage\tMemory Usage")
-    print(f"{device_power_usage} W\t\t{device_temperature} °C\t\t{device_usage} %\t\t{device_mem_usage:.0f} %\n")
+    print(f"{device_power_usage:<3} W\t\t{device_temperature:<3} °C\t\t{device_usage:<3} %\t\t{device_mem_usage:<3} %\n")
 
 def get_gpu_clock_info(device) -> None:
     gpu_clock_info = c_nvmlClockOffset_t()
@@ -33,27 +33,25 @@ def get_gpu_clock_info(device) -> None:
         raise Exception("Failed to get GPU clock offset.")
 
     current_gpu_clock = nvmlDeviceGetClockInfo(handle=device, type=NVML_CLOCK_GRAPHICS)
-    gpu_clock_offset = gpu_clock_info.clockOffsetMHz
+    offset_gpu_clock = gpu_clock_info.clockOffsetMHz
     max_gpu_clock = nvmlDeviceGetMaxClockInfo(handle=device, type=NVML_CLOCK_GRAPHICS)
 
-    print("GPU Current Clock\tGPU Clock Offset\tGPU Max Clock")
-    print(f"{current_gpu_clock} MHz\t\t{gpu_clock_offset} MHz\t\t\t{max_gpu_clock} MHz\n")
-
+    print("GPU Clock Current\tGPU Clock Offset\tGPU Clock Max")
+    print(f"{current_gpu_clock:<5} MHz\t\t{offset_gpu_clock:<5} MHz\t\t{max_gpu_clock:<5} MHz\n")
 def get_mem_clock_info(device) -> None:
     current_mem_clock = nvmlDeviceGetClockInfo(handle=device, type=NVML_CLOCK_MEM)
-    mem_clock_offset = nvmlDeviceGetMemClkVfOffset(device=device) // 2
+    offset_mem_clock = nvmlDeviceGetMemClkVfOffset(device=device) // 2
     max_mem_clock = nvmlDeviceGetMaxClockInfo(handle=device, type=NVML_CLOCK_MEM)
 
-    print("Mem Current Clock\tMem Clock Offset\tMem Max Clock")
-    print(f"{current_mem_clock} MHz\t\t{mem_clock_offset} MHz\t\t\t{max_mem_clock} MHz\n")
-
+    print("Mem Clock Current\tMem Clock Offset\tMem Clock Max")
+    print(f"{current_mem_clock:<5} MHz\t\t{offset_mem_clock:<5} MHz\t\t{max_mem_clock:<5} MHz\n")
 def get_power_limit_info(device) -> None:
-    default_power_limit = nvmlDeviceGetPowerManagementDefaultLimit(handle=device) // 1000
     current_power_limit = nvmlDeviceGetPowerManagementLimit(handle=device) // 1000
+    default_power_limit = nvmlDeviceGetPowerManagementDefaultLimit(handle=device) // 1000
     range_power_limit = [i // 1000 for i in nvmlDeviceGetPowerManagementLimitConstraints(handle=device)]
 
-    print("Power Limit Default\tPower Limit Current\tPower Limit Range")
-    print(f"{default_power_limit} W\t\t\t{current_power_limit} W\t\t\t{range_power_limit[0]} - {range_power_limit[1]} W\n")
+    print("Power Limit Current\tPower Limit Default\tPower Limit Range")
+    print(f"{current_power_limit:<5} W\t\t\t{default_power_limit:<5} W\t\t\t{range_power_limit[0]} - {range_power_limit[1]} W\n")
 
 def main() -> None:
     try:
