@@ -7,6 +7,7 @@ DEVICE_INDEX = 0
 def get_device_info(device) -> None:
     device_name = nvmlDeviceGetName(handle=device)
     power_state = nvmlDeviceGetPowerState(handle=device)
+
     print(f"Device Name\t\t\tDevice P-State")
     print(f"{device_name}\tP{power_state}\n")
 
@@ -27,7 +28,6 @@ def get_gpu_clock_info(device) -> None:
     gpu_clock_info.pstate = NVML_PSTATE_0
 
     status_code = nvmlDeviceGetClockOffsets(device=device, info=byref(gpu_clock_info))
-
     if status_code != NVML_SUCCESS:
         print("Error getting GPU clock offset:", nvmlErrorString(result=status_code).decode())
         raise Exception("Failed to get GPU clock offset.")
@@ -38,6 +38,7 @@ def get_gpu_clock_info(device) -> None:
 
     print("GPU Clock Current\tGPU Clock Offset\tGPU Clock Max")
     print(f"{current_gpu_clock:<5} MHz\t\t{offset_gpu_clock:<5} MHz\t\t{max_gpu_clock:<5} MHz\n")
+
 def get_mem_clock_info(device) -> None:
     current_mem_clock = nvmlDeviceGetClockInfo(handle=device, type=NVML_CLOCK_MEM)
     offset_mem_clock = nvmlDeviceGetMemClkVfOffset(device=device) // 2
@@ -45,6 +46,7 @@ def get_mem_clock_info(device) -> None:
 
     print("Mem Clock Current\tMem Clock Offset\tMem Clock Max")
     print(f"{current_mem_clock:<5} MHz\t\t{offset_mem_clock:<5} MHz\t\t{max_mem_clock:<5} MHz\n")
+
 def get_power_limit_info(device) -> None:
     current_power_limit = nvmlDeviceGetPowerManagementLimit(handle=device) // 1000
     default_power_limit = nvmlDeviceGetPowerManagementDefaultLimit(handle=device) // 1000
