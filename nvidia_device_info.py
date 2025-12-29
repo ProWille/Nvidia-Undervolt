@@ -7,19 +7,20 @@ DEVICE_INDEX = 0
 def get_device_info(device) -> None:
     device_name = nvmlDeviceGetName(handle=device)
     power_state = nvmlDeviceGetPowerState(handle=device)
+    temperature = nvmlDeviceGetTemperature(handle=device, sensor=NVML_TEMPERATURE_GPU)
 
-    print(f"Device Name\t\t\tDevice P-State")
-    print(f"{device_name}\tP{power_state}\n")
+    print(f"Device Name\t\t\tDevice P-State\tTemperature")
+    print(f"{device_name}\tP{power_state}\t\t{temperature:<3} °C\n")
 
 def get_device_usage(device) -> None:
-    device_power_usage = nvmlDeviceGetPowerUsage(handle=device) // 1000
-    device_temperature = nvmlDeviceGetTemperature(handle=device, sensor=NVML_TEMPERATURE_GPU)
+    power_usage = nvmlDeviceGetPowerUsage(handle=device) // 1000
+    fan_speed = nvmlDeviceGetFanSpeed(handle=device)
     device_usage = nvmlDeviceGetUtilizationRates(handle=device).gpu
-    device_mem_info = nvmlDeviceGetMemoryInfo(handle=device)
-    device_mem_usage = int((device_mem_info.used / device_mem_info.total) * 100)
+    memory_info = nvmlDeviceGetMemoryInfo(handle=device)
+    memory_usage = int((memory_info.used / memory_info.total) * 100)
 
-    print("Power Usage\tTemperature\tGPU Usage\tMemory Usage")
-    print(f"{device_power_usage:<3} W\t\t{device_temperature:<3} °C\t\t{device_usage:<3} %\t\t{device_mem_usage:<3} %\n")
+    print("Power Usage\tFan Speed\tGPU Usage\tMemory Usage")
+    print(f"{power_usage:<3} W\t\t{fan_speed:<3} %\t\t{device_usage:<3} %\t\t{memory_usage:<3} %\n")
 
 def get_gpu_clock_info(device) -> None:
     gpu_clock_info = c_nvmlClockOffset_t()

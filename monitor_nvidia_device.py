@@ -11,6 +11,7 @@ class NvidiaDeviceInfo:
         self.min_power_state, self.max_power_state = -inf, inf
         self.min_power_usage, self.max_power_usage = inf, -inf
         self.min_temperature, self.max_temperature = inf, -inf
+        self.min_fan_speed, self.max_fan_speed = inf, -inf
         self.min_device_usage, self.max_device_usage = inf, -inf
         self.min_gpu_clock, self.max_gpu_clock = inf, -inf
         self.min_memory_usage, self.max_memory_usage = inf, -inf
@@ -38,16 +39,22 @@ class NvidiaDeviceInfo:
         self.__print_device_info('Power State', '', power_state, self.min_power_state, self.max_power_state)
 
     def get_power_usage(self) -> None:
-        current_power_usage = nvmlDeviceGetPowerUsage(handle=self.device) // 1000
-        self.min_power_usage = min(current_power_usage, self.min_power_usage)
-        self.max_power_usage = max(current_power_usage, self.max_power_usage)
-        self.__print_device_info('Power Usage', 'W', current_power_usage, self.min_power_usage, self.max_power_usage)
+        power_usage = nvmlDeviceGetPowerUsage(handle=self.device) // 1000
+        self.min_power_usage = min(power_usage, self.min_power_usage)
+        self.max_power_usage = max(power_usage, self.max_power_usage)
+        self.__print_device_info('Power Usage', 'W', power_usage, self.min_power_usage, self.max_power_usage)
 
     def get_temperature(self) -> None:
-        current_temperature = nvmlDeviceGetTemperature(handle=self.device, sensor=NVML_TEMPERATURE_GPU)
-        self.min_temperature = min(current_temperature, self.min_temperature)
-        self.max_temperature = max(current_temperature, self.max_temperature)
-        self.__print_device_info('Temperature', '°C', current_temperature, self.min_temperature, self.max_temperature)
+        temperature = nvmlDeviceGetTemperature(handle=self.device, sensor=NVML_TEMPERATURE_GPU)
+        self.min_temperature = min(temperature, self.min_temperature)
+        self.max_temperature = max(temperature, self.max_temperature)
+        self.__print_device_info('Temperature', '°C', temperature, self.min_temperature, self.max_temperature)
+
+    def get_fan_speed(self) -> None:
+        fan_speed = nvmlDeviceGetFanSpeed(handle=self.device)
+        self.min_fan_speed = min(fan_speed, self.min_fan_speed)
+        self.max_fan_speed = max(fan_speed, self.max_fan_speed)
+        self.__print_device_info('Fan Speed', '%', fan_speed, self.min_fan_speed, self.max_fan_speed)
 
     def get_device_usage(self) -> None:
         device_usage = nvmlDeviceGetUtilizationRates(handle=self.device).gpu
@@ -62,11 +69,11 @@ class NvidiaDeviceInfo:
         self.__print_device_info('GPU Clock', 'MHz', gpu_clock, self.min_gpu_clock, self.max_gpu_clock)
 
     def get_memory_usage(self) -> None:
-        device_mem_info = nvmlDeviceGetMemoryInfo(handle=self.device)
-        device_mem_usage = round((device_mem_info.used / device_mem_info.total) * 100)
-        self.min_memory_usage = min(device_mem_usage, self.min_memory_usage)
-        self.max_memory_usage = max(device_mem_usage, self.max_memory_usage)
-        self.__print_device_info('Memory Usage', '%', device_mem_usage, self.min_memory_usage, self.max_memory_usage)
+        memory_info = nvmlDeviceGetMemoryInfo(handle=self.device)
+        memory_usage = round((memory_info.used / memory_info.total) * 100)
+        self.min_memory_usage = min(memory_usage, self.min_memory_usage)
+        self.max_memory_usage = max(memory_usage, self.max_memory_usage)
+        self.__print_device_info('Memory Usage', '%', memory_usage, self.min_memory_usage, self.max_memory_usage)
 
     def get_memory_clock(self) -> None:
         memory_clock = nvmlDeviceGetClockInfo(handle=self.device, type=NVML_CLOCK_MEM)
@@ -80,6 +87,7 @@ def get_device_info(device_index: int, interval_seconds: int) -> None:
         device.get_power_state()
         device.get_power_usage()
         device.get_temperature()
+        device.get_fan_speed()
         device.get_device_usage()
         device.get_device_clock()
         device.get_memory_usage()
