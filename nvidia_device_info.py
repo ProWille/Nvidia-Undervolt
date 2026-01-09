@@ -6,11 +6,11 @@ DEVICE_INDEX = 0
 
 def get_device_info(device) -> None:
     device_name = nvmlDeviceGetName(handle=device)
-    power_state = nvmlDeviceGetPowerState(handle=device)
+    performance_state = nvmlDeviceGetPerformanceState(handle=device)
     temperature = nvmlDeviceGetTemperature(handle=device, sensor=NVML_TEMPERATURE_GPU)
 
     print(f"Device Name\t\t\tDevice P-State\tTemperature")
-    print(f"{device_name}\tP{power_state}\t\t{temperature:<3} °C\n")
+    print(f"{device_name}\tP{performance_state}\t\t{temperature:<3} °C\n")
 
 def get_device_usage(device) -> None:
     power_usage = nvmlDeviceGetPowerUsage(handle=device) // 1000

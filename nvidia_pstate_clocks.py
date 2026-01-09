@@ -12,19 +12,17 @@ CLOCK_TYPES = {
 def get_min_max_clock_of_pstate(device, pstate, clock_types: dict) -> None:
     lines = []
     lines.append(f"PSTATE_{pstate}:\n")
-    try:
-        for name, clock_type in clock_types.items():
-            clock = nvmlDeviceGetMinMaxClockOfPState(device=device, clockType=clock_type, pstate=pstate)
-            lines.append(f"  {name}: {clock}\n")
-        print(''.join(lines))
-    except NVMLError:
-        pass
+    for name, clock_type in clock_types.items():
+        clock = nvmlDeviceGetMinMaxClockOfPState(device=device, clockType=clock_type, pstate=pstate)
+        lines.append(f"  {name}: {clock}\n")
+    print(''.join(lines))
 
 def main() -> None:
     try:
         nvmlInit()
         device = nvmlDeviceGetHandleByIndex(index=DEVICE_INDEX)
-        for pstate in range(NVML_PSTATE_0, NVML_PSTATE_15 + 1):
+        supported_pstates = nvmlDeviceGetSupportedPerformanceStates(device=device)
+        for pstate in supported_pstates:
             get_min_max_clock_of_pstate(device=device, pstate=pstate, clock_types=CLOCK_TYPES)
     except NVMLError as err:
         print("Failed to initialize NVML or get device handle:", err)
