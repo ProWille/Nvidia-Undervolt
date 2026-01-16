@@ -4,6 +4,8 @@ Description=Undervolt the first available Nvidia GPU device
 [Service]
 Type=oneshot
 ExecStart=/usr/local/bin/undervolt-nvidia-device
+ExecStop=/usr/local/bin/reset-nvidia-device
+RemainAfterExit=yes
 
 [Install]
 WantedBy=graphical.target

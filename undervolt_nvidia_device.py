@@ -5,9 +5,9 @@ from ctypes import byref
 # Run command to find the correct index: nvidia-smi --list-gpus.
 DEVICE_INDEX = 0
 MIN_GPU_LOCKED_CLOCK = 210
-MAX_GPU_LOCKED_CLOCK = 2010
+MAX_GPU_LOCKED_CLOCK = 1995
 POWER_LIMIT = 230_000
-GPU_CLOCK_OFFSET = 180
+GPU_CLOCK_OFFSET = 165
 MEM_CLOCK_OFFSET = 550
 
 # Sets minimum and maximum GPU clocks, You can find valid clock values with command: nvidia-smi -q -d SUPPORTED_CLOCKS.
