@@ -1,14 +1,14 @@
-#!/usr/bin/env python
+#!/home/william/Scripts/Nvidia-Undervolt/.venv/bin/python
 from pynvml import *
 from ctypes import byref
 
 # Run command to find the correct index: nvidia-smi --list-gpus.
 DEVICE_INDEX = 0
 MIN_GPU_LOCKED_CLOCK = 210
-MAX_GPU_LOCKED_CLOCK = 1965
+MAX_GPU_LOCKED_CLOCK = 2010
 POWER_LIMIT = 230_000
 GPU_CLOCK_OFFSET = 180
-MEM_CLOCK_OFFSET = 500
+MEM_CLOCK_OFFSET = 550
 
 # Sets minimum and maximum GPU clocks, You can find valid clock values with command: nvidia-smi -q -d SUPPORTED_CLOCKS.
 # If you're happy with the maximum clock value of your GPU, you can omit this function.
@@ -54,7 +54,7 @@ def set_memory_clock_offset(device, clock_offset: int) -> None:
         print("Error setting memory clock offset:", nvmlErrorString(status_code).decode())
         raise Exception("Failed to set memory clock offset.")
 
-def main():
+def main() -> None:
     try:
         nvmlInit()
         device = nvmlDeviceGetHandleByIndex(index=DEVICE_INDEX)

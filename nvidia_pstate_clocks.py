@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/home/william/Scripts/Nvidia-Undervolt/.venv/bin/python
 from pynvml import *
 
 DEVICE_INDEX = 0

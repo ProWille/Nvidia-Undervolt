@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/home/william/Scripts/Nvidia-Undervolt/.venv/bin/python
 from pynvml import *
 
 DEVICE_INDEX = 0
@@ -42,7 +42,7 @@ def reset_memory_clock_offset(device) -> None:
         print("Error resetting memory clock offset:", nvmlErrorString(status_code).decode())
         raise Exception("Failed to reset memory clock offset.")
 
-def main():
+def main() -> None:
     try:
         nvmlInit()
         device = nvmlDeviceGetHandleByIndex(index=DEVICE_INDEX)
