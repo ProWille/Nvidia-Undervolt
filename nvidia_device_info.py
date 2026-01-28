@@ -30,8 +30,7 @@ def get_gpu_clock_info(device) -> None:
 
     status_code = nvmlDeviceGetClockOffsets(device=device, info=byref(gpu_clock_info))
     if status_code != NVML_SUCCESS:
-        print("Error getting GPU clock offset:", nvmlErrorString(result=status_code).decode())
-        raise Exception("Failed to get GPU clock offset.")
+        raise Exception("Failed to get GPU clock offset with error code:", nvmlErrorString(result=status_code).decode())
 
     current_gpu_clock = nvmlDeviceGetClockInfo(handle=device, type=NVML_CLOCK_GRAPHICS)
     offset_gpu_clock = gpu_clock_info.clockOffsetMHz
@@ -66,9 +65,9 @@ def main() -> None:
         get_mem_clock_info(device=device)
         get_power_limit_info(device=device)
     except NVMLError as err:
-        print("Failed to initialize NVML or get device handle:", err)
+        print("NVMLError:", err)
     except Exception as e:
-        print("An error occurred:", e)
+        print("Exception:", e)
     finally:
         nvmlShutdown()
 

@@ -25,9 +25,9 @@ def main() -> None:
         for pstate in supported_pstates:
             get_min_max_clock_of_pstate(device=device, pstate=pstate, clock_types=CLOCK_TYPES)
     except NVMLError as err:
-        print("Failed to initialize NVML or get device handle:", err)
+        print("NVMLError:", err)
     except Exception as e:
-        print("An error occurred:", e)
+        print("Exception:", e)
     finally:
         nvmlShutdown()
 

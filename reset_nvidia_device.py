@@ -1,4 +1,5 @@
 #!/home/william/Scripts/Nvidia-Undervolt/.venv/bin/python
+import sys
 from pynvml import *
 
 DEVICE_INDEX = 0
@@ -13,8 +14,7 @@ def reset_power_limit(device) -> None:
 
     status_code = nvmlDeviceSetPowerManagementLimit_v2(device=device, powerScope=NVML_POWER_SCOPE_GPU, powerLimit=power_limit_default)
     if status_code != NVML_SUCCESS:
-        print("Error resetting power limit:", nvmlErrorString(status_code).decode())
-        raise Exception("Failed to reset power limit.")
+        raise Exception("Failed to reset power limit with error code:", nvmlErrorString(result=status_code).decode())
 
 # Offsets the curve back to default.
 def reset_gpu_clock_offset(device) -> None:
@@ -26,8 +26,7 @@ def reset_gpu_clock_offset(device) -> None:
 
     status_code = nvmlDeviceSetClockOffsets(device=device, info=byref(gpu_clock_info))
     if status_code != NVML_SUCCESS:
-        print("Error resetting GPU clock offset:", nvmlErrorString(status_code).decode())
-        raise Exception("Failed to reset GPU clock offset.")
+        raise Exception("Failed to reset GPU clock offset with error code:", nvmlErrorString(result=status_code).decode())
 
 # Offsets the memory clock back to default.
 def reset_memory_clock_offset(device) -> None:
@@ -39,8 +38,7 @@ def reset_memory_clock_offset(device) -> None:
 
     status_code = nvmlDeviceSetClockOffsets(device=device, info=byref(mem_clock_info))
     if status_code != NVML_SUCCESS:
-        print("Error resetting memory clock offset:", nvmlErrorString(status_code).decode())
-        raise Exception("Failed to reset memory clock offset.")
+        raise Exception("Failed to reset memory clock offset with error code:", nvmlErrorString(result=status_code).decode())
 
 def main() -> None:
     try:
@@ -50,11 +48,14 @@ def main() -> None:
         reset_power_limit(device=device)
         reset_gpu_clock_offset(device=device)
         reset_memory_clock_offset(device=device)
-        print("NVIDIA device reset to default settings successfully.")
+        device_name = nvmlDeviceGetName(handle=device)
+        print(f"Device reset applied to {device_name} with default settings.")
     except NVMLError as err:
-        print("Failed to initialize NVML or get device handle:", err)
+        print("NVMLError:", err, file=sys.stderr)
+        sys.exit(1)
     except Exception as e:
-        print("An error occurred:", e)
+        print("Exception:", e, file=sys.stderr)
+        sys.exit(1)
     finally:
         nvmlShutdown()
 

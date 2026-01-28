@@ -1,11 +1,17 @@
 [Unit]
-Description=Undervolt the first available Nvidia GPU device
+Description=Undervolt Nvidia GPU Device
+After=graphical.target local-fs.target
 
 [Service]
 Type=oneshot
+User=root
 ExecStart=/usr/local/bin/undervolt-nvidia-device
 ExecStop=/usr/local/bin/reset-nvidia-device
 RemainAfterExit=yes
+TimeoutStartSec=30
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
 
 [Install]
 WantedBy=graphical.target

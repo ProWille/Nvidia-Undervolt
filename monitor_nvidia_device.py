@@ -102,9 +102,9 @@ def main() -> None:
     except KeyboardInterrupt:
         print("Monitoring stopped by user.")
     except NVMLError as err:
-        print("Failed to initialize NVML or get device handle:", err)
+        print("NVMLError:", err)
     except Exception as e:
-        print("An error occurred during monitoring:", e)
+        print("Exception:", e)
     finally:
         nvmlShutdown()
 
