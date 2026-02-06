@@ -1,12 +1,12 @@
 [Unit]
-Description=Undervolt Nvidia GPU Device
+Description=NVIDIA GPU Undervolt
 After=graphical.target local-fs.target
 
 [Service]
 Type=oneshot
 User=root
-ExecStart=/usr/local/bin/undervolt-nvidia-device
-ExecStop=/usr/local/bin/reset-nvidia-device
+ExecStart=/usr/local/bin/nvidia-device-undervolt
+ExecStop=/usr/local/bin/nvidia-device-reset
 RemainAfterExit=yes
 TimeoutStartSec=30
 TimeoutStopSec=30
