@@ -1,0 +1,12 @@
+[Unit]
+Description=Reset NVIDIA GPU before suspend
+Before=nvidia-suspend.service
+Wants=nvidia-suspend.service
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/nvidia-device-reset
+
+[Install]
+WantedBy=suspend.target
