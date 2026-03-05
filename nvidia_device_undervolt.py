@@ -63,10 +63,10 @@ def main() -> None:
         set_memory_clock_offset(device=device, clock_offset=MEM_CLOCK_OFFSET)
         device_name = nvmlDeviceGetName(handle=device)
         print(f"Undervolt applied to {device_name}:\
-              \n\tGPU Locked Clocks : {MIN_GPU_LOCKED_CLOCK}-{MAX_GPU_LOCKED_CLOCK} MHz\
-              \n\tPower Limit       : {POWER_LIMIT} W\
-              \n\tGPU Clock Offset  : {GPU_CLOCK_OFFSET} MHz\
-              \n\tMem Clock Offset  : {MEM_CLOCK_OFFSET} MHz")
+              \nGPU Locked Clocks : {MIN_GPU_LOCKED_CLOCK}-{MAX_GPU_LOCKED_CLOCK} MHz\
+              \nPower Limit       : {POWER_LIMIT} W\
+              \nGPU Clock Offset  : {GPU_CLOCK_OFFSET} MHz\
+              \nMem Clock Offset  : {MEM_CLOCK_OFFSET} MHz")
     except NVMLError as err:
         print("NVMLError:", err, file=sys.stderr)
         sys.exit(1)
