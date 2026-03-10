@@ -1,10 +1,9 @@
 [Unit]
 Description=NVIDIA GPU Undervolt
-After=graphical.target local-fs.target
+After=graphical.target nvidia-persistenced.target
 
 [Service]
 Type=oneshot
-User=root
 ExecStart=/usr/local/bin/nvidia-device-undervolt
 ExecStop=/usr/local/bin/nvidia-device-reset
 RemainAfterExit=yes

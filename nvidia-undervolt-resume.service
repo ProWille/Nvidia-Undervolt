@@ -1,11 +1,10 @@
 [Unit]
 Description=Apply NVIDIA GPU undervolt after resume
 After=nvidia-resume.service
-Requires=nvidia-resume.service
-DefaultDependencies=no
 
 [Service]
 Type=oneshot
+ExecStartPre=/usr/bin/sleep 5
 ExecStart=/usr/local/bin/nvidia-device-undervolt
 
 [Install]
