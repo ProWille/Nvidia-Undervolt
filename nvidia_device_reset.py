@@ -1,8 +1,10 @@
-#!/home/william/Scripts/Nvidia-Undervolt/.venv/bin/python
+#!/usr/bin/env python3
 import sys
+import argparse
 from pynvml import *
+from ctypes import byref
 
-DEVICE_INDEX = 0
+DEFAULT_DEVICE_INDEX = 0
 
 # Reset gpu locked clocks to default values.
 def reset_gpu_locked_clocks(device) -> None:
@@ -41,9 +43,13 @@ def reset_memory_clock_offset(device) -> None:
         raise Exception("Failed to reset memory clock offset with error code:", nvmlErrorString(result=status_code).decode())
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="NVIDIA GPU Reset")
+    parser.add_argument("--gpu-index", type=int, default=DEFAULT_DEVICE_INDEX, help="GPU device index (default: %(default)s)")
+    args = parser.parse_args()
+
     try:
         nvmlInit()
-        device = nvmlDeviceGetHandleByIndex(index=DEVICE_INDEX)
+        device = nvmlDeviceGetHandleByIndex(index=args.gpu_index)
         reset_gpu_locked_clocks(device=device)
         reset_power_limit(device=device)
         reset_gpu_clock_offset(device=device)

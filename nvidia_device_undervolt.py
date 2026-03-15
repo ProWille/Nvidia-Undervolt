@@ -1,15 +1,15 @@
-#!/home/william/Scripts/Nvidia-Undervolt/.venv/bin/python
+#!/usr/bin/env python3
 import sys
+import argparse
 from pynvml import *
 from ctypes import byref
 
-# Run command to find the correct index: nvidia-smi --list-gpus.
-DEVICE_INDEX = 0
-MIN_GPU_LOCKED_CLOCK = 210
-MAX_GPU_LOCKED_CLOCK = 1995
-POWER_LIMIT = 230
-GPU_CLOCK_OFFSET = 165
-MEM_CLOCK_OFFSET = 550
+DEFAULT_DEVICE_INDEX = 0
+DEFAULT_MIN_GPU_LOCKED_CLOCK = 210
+DEFAULT_MAX_GPU_LOCKED_CLOCK = 1995
+DEFAULT_POWER_LIMIT = 230
+DEFAULT_GPU_CLOCK_OFFSET = 165
+DEFAULT_MEM_CLOCK_OFFSET = 550
 
 # Sets minimum and maximum GPU clocks, You can find valid clock values with command: nvidia-smi -q -d SUPPORTED_CLOCKS.
 # If you're happy with the maximum clock value of your GPU, you can omit this function.
@@ -54,19 +54,28 @@ def set_memory_clock_offset(device, clock_offset: int) -> None:
         raise Exception("Failed to set memory clock offset with error code:", nvmlErrorString(status_code).decode())
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="NVIDIA GPU Undervolt")
+    parser.add_argument("--gpu-index", type=int, default=DEFAULT_DEVICE_INDEX, help="GPU device index (default: %(default)s)")
+    parser.add_argument("--min-clock", type=int, default=DEFAULT_MIN_GPU_LOCKED_CLOCK, help="Minimum GPU clock in MHz (default: %(default)s)")
+    parser.add_argument("--max-clock", type=int, default=DEFAULT_MAX_GPU_LOCKED_CLOCK, help="Maximum GPU clock in MHz (default: %(default)s)")
+    parser.add_argument("--power-limit", type=int, default=DEFAULT_POWER_LIMIT, help="Power limit in Watts (default: %(default)s)")
+    parser.add_argument("--gpu-offset", type=int, default=DEFAULT_GPU_CLOCK_OFFSET, help="GPU clock offset in MHz (default: %(default)s)")
+    parser.add_argument("--mem-offset", type=int, default=DEFAULT_MEM_CLOCK_OFFSET, help="Memory clock offset in MHz (default: %(default)s)")
+    args = parser.parse_args()
+
     try:
         nvmlInit()
-        device = nvmlDeviceGetHandleByIndex(index=DEVICE_INDEX)
-        set_gpu_locked_clocks(device=device, min_locked_clock=MIN_GPU_LOCKED_CLOCK, max_locked_clock=MAX_GPU_LOCKED_CLOCK)
-        set_power_limit(device=device, power_limit=POWER_LIMIT)
-        set_gpu_clock_offset(device=device, clock_offset=GPU_CLOCK_OFFSET)
-        set_memory_clock_offset(device=device, clock_offset=MEM_CLOCK_OFFSET)
+        device = nvmlDeviceGetHandleByIndex(index=args.gpu_index)
+        set_gpu_locked_clocks(device=device, min_locked_clock=args.min_clock, max_locked_clock=args.max_clock)
+        set_power_limit(device=device, power_limit=args.power_limit)
+        set_gpu_clock_offset(device=device, clock_offset=args.gpu_offset)
+        set_memory_clock_offset(device=device, clock_offset=args.mem_offset)
         device_name = nvmlDeviceGetName(handle=device)
         print(f"Undervolt applied to {device_name}:\
-              \nGPU Locked Clocks : {MIN_GPU_LOCKED_CLOCK}-{MAX_GPU_LOCKED_CLOCK} MHz\
-              \nPower Limit       : {POWER_LIMIT} W\
-              \nGPU Clock Offset  : {GPU_CLOCK_OFFSET} MHz\
-              \nMem Clock Offset  : {MEM_CLOCK_OFFSET} MHz")
+              \nGPU Locked Clocks : {args.min_clock}-{args.max_clock} MHz\
+              \nPower Limit       : {args.power_limit} W\
+              \nGPU Clock Offset  : {args.gpu_offset} MHz\
+              \nMem Clock Offset  : {args.mem_offset} MHz")
     except NVMLError as err:
         print("NVMLError:", err, file=sys.stderr)
         sys.exit(1)

@@ -1,8 +1,10 @@
-#!/home/william/Scripts/Nvidia-Undervolt/.venv/bin/python
+#!/usr/bin/env python3
+import sys
+import argparse
 from pynvml import *
 from ctypes import byref
 
-DEVICE_INDEX = 0
+DEFAULT_DEVICE_INDEX = 0
 
 def get_device_info(device) -> None:
     device_name = nvmlDeviceGetName(handle=device)
@@ -56,9 +58,13 @@ def get_power_limit_info(device) -> None:
     print(f"{current_power_limit:<5} W\t\t\t{default_power_limit:<5} W\t\t\t{range_power_limit[0]} - {range_power_limit[1]} W\n")
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="NVIDIA GPU Info")
+    parser.add_argument("--gpu-index", type=int, default=DEFAULT_DEVICE_INDEX, help="GPU device index (default: %(default)s)")
+    args = parser.parse_args()
+
     try:
         nvmlInit()
-        device = nvmlDeviceGetHandleByIndex(index=DEVICE_INDEX)
+        device = nvmlDeviceGetHandleByIndex(index=args.gpu_index)
         get_device_info(device=device)
         get_device_usage(device=device)
         get_gpu_clock_info(device=device)
@@ -66,8 +72,10 @@ def main() -> None:
         get_power_limit_info(device=device)
     except NVMLError as err:
         print("NVMLError:", err)
+        sys.exit(1)
     except Exception as e:
         print("Exception:", e)
+        sys.exit(1)
     finally:
         nvmlShutdown()
 

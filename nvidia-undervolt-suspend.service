@@ -1,6 +1,6 @@
 [Unit]
 Description=Reset NVIDIA GPU before suspend
-Before=nvidia-suspend.service
+Before=systemd-suspend.service
 DefaultDependencies=no
 
 [Service]
@@ -8,4 +8,6 @@ Type=oneshot
 ExecStart=/usr/local/bin/nvidia-device-reset
 
 [Install]
-WantedBy=suspend.target
+WantedBy=systemd-suspend.service
+WantedBy=systemd-hibernate.service
+WantedBy=systemd-suspend-then-hibernate.service

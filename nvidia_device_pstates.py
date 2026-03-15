@@ -1,7 +1,9 @@
-#!/home/william/Scripts/Nvidia-Undervolt/.venv/bin/python
+#!/usr/bin/env python3
+import sys
+import argparse
 from pynvml import *
 
-DEVICE_INDEX = 0
+DEFAULT_DEVICE_INDEX = 0
 CLOCK_TYPES = {
     "CLOCK_GRAPHICS": NVML_CLOCK_GRAPHICS,
     "CLOCK_SM": NVML_CLOCK_SM,
@@ -18,16 +20,22 @@ def get_min_max_clock_of_pstate(device, pstate, clock_types: dict) -> None:
     print(''.join(lines))
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="NVIDIA GPU Performance States")
+    parser.add_argument("--gpu-index", type=int, default=DEFAULT_DEVICE_INDEX, help="GPU device index (default: %(default)s)")
+    args = parser.parse_args()
+
     try:
         nvmlInit()
-        device = nvmlDeviceGetHandleByIndex(index=DEVICE_INDEX)
+        device = nvmlDeviceGetHandleByIndex(index=args.gpu_index)
         supported_pstates = nvmlDeviceGetSupportedPerformanceStates(device=device)
         for pstate in supported_pstates:
             get_min_max_clock_of_pstate(device=device, pstate=pstate, clock_types=CLOCK_TYPES)
     except NVMLError as err:
         print("NVMLError:", err)
+        sys.exit(1)
     except Exception as e:
         print("Exception:", e)
+        sys.exit(1)
     finally:
         nvmlShutdown()
 

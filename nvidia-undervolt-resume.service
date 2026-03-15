@@ -4,8 +4,9 @@ After=nvidia-resume.service
 
 [Service]
 Type=oneshot
-ExecStartPre=/usr/bin/sleep 5
 ExecStart=/usr/local/bin/nvidia-device-undervolt
 
 [Install]
-WantedBy=suspend.target
+WantedBy=systemd-suspend.service
+WantedBy=systemd-hibernate.service
+WantedBy=systemd-suspend-then-hibernate.service

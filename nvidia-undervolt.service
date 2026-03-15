@@ -1,6 +1,6 @@
 [Unit]
 Description=NVIDIA GPU Undervolt
-After=graphical.target nvidia-persistenced.target
+After=nvidia-persistenced.service
 
 [Service]
 Type=oneshot
@@ -13,4 +13,4 @@ StandardOutput=journal
 StandardError=journal
 
 [Install]
-WantedBy=graphical.target
+WantedBy=multi-user.target

@@ -1,10 +1,12 @@
-#!/home/william/Scripts/Nvidia-Undervolt/.venv/bin/python
+#!/usr/bin/env python3
+import sys
+import argparse
 from pynvml import *
 from math import inf
 from time import sleep
 
-DEVICE_INDEX = 0
-INTERVAL_SECONDS = 2
+DEFAULT_DEVICE_INDEX = 0
+DEFAULT_INTERVAL_SECONDS = 2
 
 class NvidiaDeviceInfo:
     def __init__(self, device_index: int) -> None:
@@ -96,15 +98,22 @@ def get_device_info(device_index: int, interval_seconds: int) -> None:
         sleep(interval_seconds)
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="NVIDIA GPU Monitor")
+    parser.add_argument("--gpu-index", type=int, default=DEFAULT_DEVICE_INDEX, help="GPU device index (default: %(default)s)")
+    parser.add_argument("--interval", type=int, default=DEFAULT_INTERVAL_SECONDS, help="Monitoring interval in seconds (default: %(default)s)")
+    args = parser.parse_args()
+
     try:
         nvmlInit()
-        get_device_info(device_index=DEVICE_INDEX, interval_seconds=INTERVAL_SECONDS)
+        get_device_info(device_index=args.gpu_index, interval_seconds=args.interval)
     except KeyboardInterrupt:
         print("Monitoring stopped by user.")
     except NVMLError as err:
         print("NVMLError:", err)
+        sys.exit(1)
     except Exception as e:
         print("Exception:", e)
+        sys.exit(1)
     finally:
         nvmlShutdown()
 
