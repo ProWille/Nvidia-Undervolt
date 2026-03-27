@@ -1,12 +1,11 @@
 [Unit]
 Description=Apply NVIDIA GPU undervolt after resume
-After=nvidia-resume.service
+After=nvidia-resume.service graphical.target
+Wants=nvidia-resume.service
 
 [Service]
 Type=oneshot
 ExecStart=/usr/local/bin/nvidia-device-undervolt
 
 [Install]
-WantedBy=systemd-suspend.service
-WantedBy=systemd-hibernate.service
-WantedBy=systemd-suspend-then-hibernate.service
+WantedBy=nvidia-resume.service
