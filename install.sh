@@ -26,6 +26,8 @@ CONFIG_FILE="${NVUNDERVOLT_CONFIG_FILE:-/etc/nvidia-undervolt.conf}"
 VENV_DIR="$INSTALL_DIR/.venv"
 PYTHON_BIN="${PYTHON:-python3}"
 SERVICE_DIR="$SCRIPT_DIR/systemd"
+SCRIPTS_SRC="$SCRIPT_DIR/scripts"
+CONFIG_EXAMPLE="$SCRIPT_DIR/config/nvidia-undervolt.conf.example"
 
 CORE_SCRIPTS=(nvidia_device_undervolt.py nvidia_device_reset.py nvidia_device_info.py nvidia_device_monitor.py nvidia_device_pstates.py)
 SCRIPTS=("${CORE_SCRIPTS[@]}" nvidia_device_config.py)
@@ -106,9 +108,9 @@ install_scripts() {
     local script
     for script in "${SCRIPTS[@]}"; do
         if [[ "$DRY_RUN" -eq 1 ]]; then
-            printf '[dry-run] cp %s -> %s\n' "$SCRIPT_DIR/$script" "$INSTALL_DIR/$script"
+            printf '[dry-run] cp %s -> %s\n' "$SCRIPTS_SRC/$script" "$INSTALL_DIR/$script"
         else
-            cp "$SCRIPT_DIR/$script" "$INSTALL_DIR/"
+            cp "$SCRIPTS_SRC/$script" "$INSTALL_DIR/"
         fi
     done
 }
@@ -148,10 +150,10 @@ install_config() {
         return
     fi
     if [[ "$DRY_RUN" -eq 1 ]]; then
-        printf '[dry-run] cp %s -> %s\n' "$SCRIPT_DIR/nvidia-undervolt.conf.example" "$CONFIG_FILE"
+        printf '[dry-run] cp %s -> %s\n' "$CONFIG_EXAMPLE" "$CONFIG_FILE"
         return
     fi
-    as_root cp "$SCRIPT_DIR/nvidia-undervolt.conf.example" "$CONFIG_FILE"
+    as_root cp "$CONFIG_EXAMPLE" "$CONFIG_FILE"
     info "Config file installed at $CONFIG_FILE — edit it to tune your undervolt."
 }
 

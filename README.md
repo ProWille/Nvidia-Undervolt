@@ -35,8 +35,8 @@ cd Nvidia-Undervolt
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 
-.venv/bin/python nvidia_device_info.py          # read-only, safe
-sudo .venv/bin/python nvidia_device_undervolt.py # apply (needs root)
+.venv/bin/python scripts/nvidia_device_info.py          # read-only, safe
+sudo .venv/bin/python scripts/nvidia_device_undervolt.py # apply (needs root)
 ```
 
 The read-only scripts (`info`, `monitor`, `pstates`) work without root;
@@ -94,13 +94,16 @@ mem-offset  = 550
 To generate a config pre-filled with *your* GPU's detected limits:
 
 ```bash
-sudo .venv/bin/python nvidia_device_undervolt.py --emit-config > nvidia-undervolt.conf
+sudo .venv/bin/python scripts/nvidia_device_undervolt.py --emit-config > nvidia-undervolt.conf
 ```
 
 > `nvidia-undervolt.conf` is git-ignored so you can generate it in the repo
 > without accidentally committing your personal values.
 
 ## Scripts
+
+All scripts live in `scripts/`. `install.sh` places `nvidia-device-*` wrappers
+in `/usr/local/bin`, after which you can call them by name from anywhere.
 
 | Script | Purpose |
 | --- | --- |
@@ -110,6 +113,7 @@ sudo .venv/bin/python nvidia_device_undervolt.py --emit-config > nvidia-undervol
 | `nvidia_device_monitor.py` | Live monitor loop (`Ctrl+C` to stop) |
 | `nvidia_device_pstates.py` | Min/max clocks per performance state |
 | `nvidia-device-info.sh` | Quick `nvidia-smi`-based info dump (no Python needed) |
+| `nvidia_device_config.py` | Shared config loader (not meant to be run directly) |
 
 All Python scripts accept `--gpu-index` and `--config`; `monitor` also takes
 `--interval <seconds>` (default `2`).
