@@ -18,7 +18,7 @@ Tested on an RTX 3070 Ti with Python 3.14.
 - `info` — one-shot read of clocks, offsets, power limits, temperature
 - `monitor` — live full-screen monitor of usage, clocks, temperature, fan
 - `pstates` — min/max clocks per performance state
-- systemd integration: apply at boot, reset before suspend, re-apply on resume
+- systemd integration: apply at boot, re-apply after resume
 
 ## Prerequisites
 
@@ -127,12 +127,11 @@ nvidia-device-monitor --interval 1
 
 ## systemd integration
 
-Three units (installed by `install.sh` from `systemd/`):
+Two units (installed by `install.sh` from `systemd/`):
 
 | Unit | Runs |
 | --- | --- |
 | `nvidia-undervolt.service` | `nvidia-device-undervolt` at boot; `nvidia-device-reset` on stop (`RemainAfterExit`) |
-| `nvidia-undervolt-suspend.service` | `nvidia-device-reset` before suspend / hibernate |
 | `nvidia-undervolt-resume.service` | `nvidia-device-undervolt` after resume (ordered after `nvidia-resume.service`) |
 
 ```bash
@@ -144,8 +143,8 @@ journalctl -u nvidia-undervolt.service           # see what was applied
 
 - **`NVMLError: Insufficient Permissions`** — the setter scripts must run as
   root (`sudo`), or via the installed systemd service.
-- **`Insufficient Permissions` on suspend**: the suspend/resume units need
-  `nvidia-persistenced` for NVML to work during suspend; enable it with
+- **`Insufficient Permissions` after resume**: the resume service needs
+  `nvidia-persistenced` running for NVML to work when waking up; enable it with
   `systemctl enable --now nvidia-persistenced`.
 - **`ValueError: Power limit ... is out of range`** — your `power-limit` is
   outside the card's supported range; run `info` and use its `Power Limit

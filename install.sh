@@ -31,7 +31,7 @@ CONFIG_EXAMPLE="$SCRIPT_DIR/config/nvidia-undervolt.conf.example"
 
 CORE_SCRIPTS=(nvidia_device_undervolt.py nvidia_device_reset.py nvidia_device_info.py nvidia_device_monitor.py nvidia_device_pstates.py)
 SCRIPTS=("${CORE_SCRIPTS[@]}" nvidia_device_config.py)
-UNITS=(nvidia-undervolt.service nvidia-undervolt-suspend.service nvidia-undervolt-resume.service)
+UNITS=(nvidia-undervolt.service nvidia-undervolt-resume.service)
 
 ASSUME_YES=0
 DRY_RUN=0
@@ -186,7 +186,7 @@ install() {
     if [[ "$WITH_SERVICES" -eq 1 ]]; then
         local proceed=1
         if [[ "$ASSUME_YES" -eq 0 ]]; then
-            prompt_yes_no "Install the systemd services (boot + suspend/resume handling)?" || proceed=0
+            prompt_yes_no "Install the systemd services (boot + resume handling)?" || proceed=0
         fi
         if [[ "$proceed" -eq 1 ]]; then
             install_services

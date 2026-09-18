@@ -3,6 +3,12 @@
 # Default location: /etc/nvidia-undervolt.conf
 # Can be overridden per script with --config <path>.
 #
+# NOTE: The values below are example values tuned for an NVIDIA RTX 3070 Ti.
+# For your own GPU, generate a matching config with:
+#   sudo nvidia-device-undervolt --emit-config
+# (or:  .venv/bin/python scripts/nvidia_device_undervolt.py --emit-config)
+# This fills in the limits actually supported by your card.
+#
 # Format: `key = value` (one per line). Lines starting with '#' are comments.
 # Precedence: command-line flags > this file > built-in defaults.
 
