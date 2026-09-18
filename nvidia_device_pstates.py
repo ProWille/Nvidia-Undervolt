@@ -13,11 +13,12 @@ CLOCK_TYPES = {
 
 def get_min_max_clock_of_pstate(device, pstate, clock_types: dict) -> None:
     lines = []
-    lines.append(f"PSTATE_{pstate}:\n")
+    lines.append(f"PSTATE_{pstate}:")
+    lines.append(f"  Clock Type\t\tMin\t\tMax")
     for name, clock_type in clock_types.items():
-        clock = nvmlDeviceGetMinMaxClockOfPState(device=device, clockType=clock_type, pstate=pstate)
-        lines.append(f"  {name}: {clock}\n")
-    print(''.join(lines))
+        min_clock, max_clock = nvmlDeviceGetMinMaxClockOfPState(device=device, clockType=clock_type, pstate=pstate)
+        lines.append(f"  {name:<20}{min_clock:<8}{max_clock:<8}")
+    print('\n'.join(lines))
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="NVIDIA GPU Performance States")

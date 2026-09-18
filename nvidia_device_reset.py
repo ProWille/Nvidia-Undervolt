@@ -16,7 +16,7 @@ def reset_power_limit(device) -> None:
 
     status_code = nvmlDeviceSetPowerManagementLimit_v2(device=device, powerScope=NVML_POWER_SCOPE_GPU, powerLimit=power_limit_default)
     if status_code != NVML_SUCCESS:
-        raise Exception("Failed to reset power limit with error code:", nvmlErrorString(result=status_code).decode())
+        raise Exception("Failed to reset power limit with error code:", nvmlErrorString(result=status_code))
 
 # Offsets the curve back to default.
 def reset_gpu_clock_offset(device) -> None:
@@ -28,7 +28,7 @@ def reset_gpu_clock_offset(device) -> None:
 
     status_code = nvmlDeviceSetClockOffsets(device=device, info=byref(gpu_clock_info))
     if status_code != NVML_SUCCESS:
-        raise Exception("Failed to reset GPU clock offset with error code:", nvmlErrorString(result=status_code).decode())
+        raise Exception("Failed to reset GPU clock offset with error code:", nvmlErrorString(result=status_code))
 
 # Offsets the memory clock back to default.
 def reset_memory_clock_offset(device) -> None:
@@ -40,7 +40,7 @@ def reset_memory_clock_offset(device) -> None:
 
     status_code = nvmlDeviceSetClockOffsets(device=device, info=byref(mem_clock_info))
     if status_code != NVML_SUCCESS:
-        raise Exception("Failed to reset memory clock offset with error code:", nvmlErrorString(result=status_code).decode())
+        raise Exception("Failed to reset memory clock offset with error code:", nvmlErrorString(result=status_code))
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="NVIDIA GPU Reset")

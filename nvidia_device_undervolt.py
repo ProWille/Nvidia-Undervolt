@@ -26,7 +26,7 @@ def set_power_limit(device, power_limit: int) -> None:
 
     status_code = nvmlDeviceSetPowerManagementLimit_v2(device=device, powerScope=NVML_POWER_SCOPE_GPU, powerLimit=power_limit)
     if status_code != NVML_SUCCESS:
-        raise Exception("Failed to set power limit with error code:", nvmlErrorString(status_code).decode())
+        raise Exception("Failed to set power limit with error code:", nvmlErrorString(status_code))
 
 # Offsets the curve, this is the actual undervolt. However, it doesn't mean the card will run at a maximum of (MAX_LOCKED_CLOCK + CLOCK_OFFSET) MHz.
 # It means that at MAX_LOCKED_CLOCK MHz, it will use the voltage that it would've used at (MAX_LOCKED_CLOCK - CLOCK_OFFSET) MHz before the offset.
@@ -39,7 +39,7 @@ def set_gpu_clock_offset(device, clock_offset: int) -> None:
 
     status_code = nvmlDeviceSetClockOffsets(device=device, info=byref(gpu_clock_info))
     if status_code != NVML_SUCCESS:
-        raise Exception("Failed to set GPU clock offset with error code:", nvmlErrorString(status_code).decode())
+        raise Exception("Failed to set GPU clock offset with error code:", nvmlErrorString(status_code))
 
 # Offsets the memory clock as well, which can help with stability on some cards.
 def set_memory_clock_offset(device, clock_offset: int) -> None:
@@ -51,7 +51,7 @@ def set_memory_clock_offset(device, clock_offset: int) -> None:
 
     status_code = nvmlDeviceSetClockOffsets(device=device, info=byref(mem_clock_info))
     if status_code != NVML_SUCCESS:
-        raise Exception("Failed to set memory clock offset with error code:", nvmlErrorString(status_code).decode())
+        raise Exception("Failed to set memory clock offset with error code:", nvmlErrorString(status_code))
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="NVIDIA GPU Undervolt")
@@ -71,11 +71,13 @@ def main() -> None:
         set_gpu_clock_offset(device=device, clock_offset=args.gpu_offset)
         set_memory_clock_offset(device=device, clock_offset=args.mem_offset)
         device_name = nvmlDeviceGetName(handle=device)
-        print(f"Undervolt applied to {device_name}:\
-              \nGPU Locked Clocks : {args.min_clock}-{args.max_clock} MHz\
-              \nPower Limit       : {args.power_limit} W\
-              \nGPU Clock Offset  : {args.gpu_offset} MHz\
-              \nMem Clock Offset  : {args.mem_offset} MHz")
+        print(
+            f"Undervolt applied to {device_name}:"
+            f"\nGPU Locked Clocks : {args.min_clock}-{args.max_clock} MHz"
+            f"\nPower Limit       : {args.power_limit} W"
+            f"\nGPU Clock Offset  : {args.gpu_offset} MHz"
+            f"\nMem Clock Offset  : {args.mem_offset} MHz"
+        )
     except NVMLError as err:
         print("NVMLError:", err, file=sys.stderr)
         sys.exit(1)

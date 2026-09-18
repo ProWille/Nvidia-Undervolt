@@ -10,7 +10,7 @@ DEFAULT_INTERVAL_SECONDS = 2
 
 class NvidiaDeviceInfo:
     def __init__(self, device_index: int) -> None:
-        self.min_performance_state, self.max_performance_state = -inf, inf
+        self.min_performance_state, self.max_performance_state = inf, -inf
         self.min_power_usage, self.max_power_usage = inf, -inf
         self.min_temperature, self.max_temperature = inf, -inf
         self.min_fan_speed, self.max_fan_speed = inf, -inf
@@ -36,8 +36,8 @@ class NvidiaDeviceInfo:
 
     def get_performance_state(self) -> None:
         performance_state = nvmlDeviceGetPerformanceState(handle=self.device)
-        self.min_performance_state = max(performance_state, self.min_performance_state)
-        self.max_performance_state = min(performance_state, self.max_performance_state)
+        self.min_performance_state = min(performance_state, self.min_performance_state)
+        self.max_performance_state = max(performance_state, self.max_performance_state)
         self.__print_device_info('Performance State', '', performance_state, self.min_performance_state, self.max_performance_state)
 
     def get_power_usage(self) -> None:
