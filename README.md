@@ -112,7 +112,6 @@ in `/usr/local/bin`, after which you can call them by name from anywhere.
 | `nvidia_device_info.py` | State, clocks, offsets, power limits, temperature |
 | `nvidia_device_monitor.py` | Live monitor loop (`Ctrl+C` to stop) |
 | `nvidia_device_pstates.py` | Min/max clocks per performance state |
-| `nvidia-device-info.sh` | Quick `nvidia-smi`-based info dump (no Python needed) |
 | `nvidia_device_config.py` | Shared config loader (not meant to be run directly) |
 
 All Python scripts accept `--gpu-index` and `--config`; `monitor` also takes
