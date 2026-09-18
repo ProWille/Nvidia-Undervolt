@@ -4,6 +4,8 @@ import argparse
 from pynvml import *
 from ctypes import byref
 
+from nvidia_device_config import load_config, get_int, DEFAULT_CONFIG_PATH
+
 DEFAULT_DEVICE_INDEX = 0
 
 def get_device_info(device) -> None:
@@ -59,12 +61,15 @@ def get_power_limit_info(device) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="NVIDIA GPU Info")
-    parser.add_argument("--gpu-index", type=int, default=DEFAULT_DEVICE_INDEX, help="GPU device index (default: %(default)s)")
+    parser.add_argument("--gpu-index", type=int, default=None, help=f"GPU device index (default: {DEFAULT_DEVICE_INDEX})")
+    parser.add_argument("--config", default=None, help=f"Config file path (default: {DEFAULT_CONFIG_PATH})")
     args = parser.parse_args()
 
     try:
         nvmlInit()
-        device = nvmlDeviceGetHandleByIndex(index=args.gpu_index)
+        config = load_config(args.config or DEFAULT_CONFIG_PATH)
+        gpu_index = args.gpu_index if args.gpu_index is not None else get_int(config, "gpu-index", DEFAULT_DEVICE_INDEX)
+        device = nvmlDeviceGetHandleByIndex(index=gpu_index)
         get_device_info(device=device)
         get_device_usage(device=device)
         get_gpu_clock_info(device=device)

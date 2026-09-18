@@ -1,0 +1,27 @@
+# NVIDIA Undervolt configuration
+#
+# Default location: /etc/nvidia-undervolt.conf
+# Can be overridden per script with --config <path>.
+#
+# Format: `key = value` (one per line). Lines starting with '#' are comments.
+# Precedence: command-line flags > this file > built-in defaults.
+
+# GPU device index to target (see `nvidia-smi -L` for your devices).
+gpu-index = 0
+
+# Locked GPU clock range in MHz.
+# Valid values: `nvidia-smi -q -d SUPPORTED_CLOCKS`
+min-clock = 210
+max-clock = 1995
+
+# Power limit in Watts. The GPU throttles itself to stay under this.
+# Valid range: shown under "Power Limit Range" in `nvidia_device_info.py`.
+power-limit = 230
+
+# GPU clock offset in MHz. This is the actual undervolt:
+# at (max-clock) MHz the GPU uses the voltage of (max-clock - gpu-offset) MHz.
+gpu-offset = 165
+
+# Memory clock offset in MHz. Given as the effective GDDR clock;
+# it is doubled internally and displayed halved in the info script.
+mem-offset = 550

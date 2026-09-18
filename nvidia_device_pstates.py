@@ -3,6 +3,8 @@ import sys
 import argparse
 from pynvml import *
 
+from nvidia_device_config import load_config, get_int, DEFAULT_CONFIG_PATH
+
 DEFAULT_DEVICE_INDEX = 0
 CLOCK_TYPES = {
     "CLOCK_GRAPHICS": NVML_CLOCK_GRAPHICS,
@@ -22,12 +24,15 @@ def get_min_max_clock_of_pstate(device, pstate, clock_types: dict) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="NVIDIA GPU Performance States")
-    parser.add_argument("--gpu-index", type=int, default=DEFAULT_DEVICE_INDEX, help="GPU device index (default: %(default)s)")
+    parser.add_argument("--gpu-index", type=int, default=None, help=f"GPU device index (default: {DEFAULT_DEVICE_INDEX})")
+    parser.add_argument("--config", default=None, help=f"Config file path (default: {DEFAULT_CONFIG_PATH})")
     args = parser.parse_args()
 
     try:
         nvmlInit()
-        device = nvmlDeviceGetHandleByIndex(index=args.gpu_index)
+        config = load_config(args.config or DEFAULT_CONFIG_PATH)
+        gpu_index = args.gpu_index if args.gpu_index is not None else get_int(config, "gpu-index", DEFAULT_DEVICE_INDEX)
+        device = nvmlDeviceGetHandleByIndex(index=gpu_index)
         supported_pstates = nvmlDeviceGetSupportedPerformanceStates(device=device)
         for pstate in supported_pstates:
             get_min_max_clock_of_pstate(device=device, pstate=pstate, clock_types=CLOCK_TYPES)
